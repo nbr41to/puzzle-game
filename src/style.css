@@ -61,25 +61,5 @@ table {
   margin: 4px;
   border-radius: 50%;
   cursor: pointer;
-}
-
-.red {
-  background-color: tomato;
-  border: 2px solid tomato;
-}
-.blue {
-  background-color: skyblue;
-  border: 2px solid skyblue;
-}
-.green {
-  background-color: limegreen;
-  border: 2px solid limegreen;
-}
-.yellow {
-  background-color: gold;
-  border: 2px solid gold;
-}
-.pink {
-  background-color: violet;
-  border: 2px solid violet;
+  opacity: 0.6;
 }
