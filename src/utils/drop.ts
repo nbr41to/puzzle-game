@@ -167,7 +167,7 @@ export const alignCheck = (drops: readonly NullableDrop[]): NullableDrop[] => {
 };
 
 /* ドロップが消えた後, 下に詰める */
-export const provideDrops = (
+export const packDownDrops = (
   drops: readonly NullableDrop[],
 ): NullableDrop[] => {
   const board = dropsToBoard(drops);
@@ -196,14 +196,6 @@ export const provideDrops = (
     newRows.forEach((drop, index) => {
       newBoard[index][column] = drop;
     });
-  }
-  /* nullにDropを供給 */
-  for (let row = 0; row < 5; row++) {
-    for (let column = 0; column < 6; column++) {
-      if (newBoard[row][column] === null) {
-        newBoard[row][column] = generateDrop([row, column]);
-      }
-    }
   }
 
   return newBoard.flat();

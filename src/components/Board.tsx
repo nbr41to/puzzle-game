@@ -4,7 +4,7 @@ import {
   generateDrops,
   switchDrops,
   downDrops,
-  provideDrops,
+  packDownDrops,
 } from '@/utils/drop';
 import { FC, useCallback, useEffect, useReducer, useState } from 'react';
 import initialBoard from '@/mocks/board.json';
@@ -12,8 +12,11 @@ import clsx from 'clsx';
 import { BoardBackground } from '@/components/BoardBackground';
 import { Button } from '@/components/Button';
 
-export const Board: FC = () => {
-  const [isStarted, started] = useReducer(() => true, false);
+type Props = {
+  started: boolean;
+  onStart: () => void;
+};
+export const Board: FC<Props> = ({ started, onStart }) => {
   const [movable, switchMovable] = useReducer((state) => !state, false);
 
   const [drops, setDrops] = useState<NullableDrop[]>(
@@ -32,7 +35,7 @@ export const Board: FC = () => {
   const start = useCallback(() => {
     const result = downDrops(drops, 5);
     setDrops(result);
-    started();
+    onStart();
     switchMovable();
   }, [drops]);
 
@@ -53,19 +56,10 @@ export const Board: FC = () => {
   }, []);
 
   /* ドロップを下に詰める */
-  const provide = () => {
+  const packDown = useCallback(() => {
     switchMovable();
-    setDrops(provideDrops(drops));
-  };
-
-  // useEffect(() => {
-  //   {
-  //     (async () => {
-  //       await new Promise((resolve) => setTimeout(resolve, 1000));
-  //       downdrops();
-  //     })();
-  //   }
-  // }, [moved]);
+    setDrops(packDownDrops(drops));
+  }, [drops]);
 
   /* ドラッグしたドロップが他のドロップエリアに進入したとき */
   const handleOnDragEnter = useCallback(
@@ -87,12 +81,15 @@ export const Board: FC = () => {
   );
 
   /* ドロップを離したとき */
-  const handleOnDragEnd = useCallback(() => {
+  const handleOnDragEnd = useCallback(async () => {
     if (!moved && draggingDrop) return;
+    switchMovable();
+    await new Promise((resolve) => setTimeout(resolve, 500));
     const newDrops = alignCheck(drops);
     setDrops(newDrops);
     setDraggingDrop(null);
     setMoved(false);
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }, [moved, draggingDrop, drops]);
 
   /* SP: ドロップを動かしているとき */
@@ -170,7 +167,7 @@ export const Board: FC = () => {
         {/* Blur */}
         {!movable && <div className='absolute w-full h-full bg-black/50' />}
         {/* Start Button */}
-        {!isStarted && (
+        {!started && (
           <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
             <Button onClick={start}>START</Button>
           </div>
@@ -181,7 +178,8 @@ export const Board: FC = () => {
       <div hidden className='w-fit mx-auto mt-4'>
         <Button onClick={() => setDrops(generateDrops())}>REFRESH</Button>
       </div>
-      <Button onClick={provide}>provide</Button>
+      <Button onClick={packDown}>PACK DOWN</Button>
+      <Button onClick={packDown}>PROVIDE</Button>
     </div>
   );
 };
