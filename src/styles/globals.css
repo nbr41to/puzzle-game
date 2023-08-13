@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+}
+
+@layer utilities {
+  .attack-effect {
+    animation: attack-effect 0.5s ease-in-out;
+  }
+  .take-effect {
+    animation: take-effect 0.5s ease-in-out;
+  }
+
+  @keyframes attack-effect {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes take-effect {
+    0%,
+    50%,
+    100% {
+      opacity: 0;
+    }
+    25%,
+    75% {
+      opacity: 1;
+    }
+  }
+}
