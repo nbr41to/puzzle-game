@@ -8,45 +8,51 @@ export const PartyMembers: FC<Prop> = () => {
     <div className=''>
       <div className='flex justify-between'>
         <Image
-          className='border-2 border-red-500 bg-red-200 rounded'
+          className='border-2 border-red-500 bg-red-200 rounded active:scale-105'
           src='/computer_hacker_white1_woman.png'
           width={48}
           height={48}
+          priority={true}
           alt='party member 1 image'
         />
         <Image
-          className='border-2 border-violet-500 bg-violet-200 rounded'
+          className='border-2 border-violet-500 bg-violet-200 rounded active:scale-105'
           src='/computer_hacker_black1.png'
           width={48}
           height={48}
+          priority={true}
           alt='party member 2 image'
         />
         <Image
-          className='border-2 border-violet-500 bg-violet-200 rounded'
+          className='border-2 border-violet-500 bg-violet-200 rounded active:scale-105'
           src='/computer_hacker_black1.png'
           width={48}
           height={48}
+          priority={true}
           alt='party member 3 image'
         />
         <Image
-          className='border-2 border-violet-500 bg-violet-200 rounded'
+          className='border-2 border-violet-500 bg-violet-200 rounded active:scale-105'
           src='/computer_hacker_black_syuudan.png'
           width={48}
           height={48}
+          priority={true}
           alt='party member 4 image'
         />
         <Image
-          className='border-2 border-violet-500 bg-violet-200 rounded'
+          className='border-2 border-violet-500 bg-violet-200 rounded active:scale-105'
           src='/computer_hacker_black_syuudan.png'
           width={48}
           height={48}
+          priority={true}
           alt='party member 5 image'
         />
         <Image
-          className='border-2 border-red-500 bg-red-200 rounded'
+          className='border-2 border-red-500 bg-red-200 rounded active:scale-105'
           src='/computer_hacker_white1_woman.png'
           width={48}
           height={48}
+          priority={true}
           alt='party member 6 image'
         />
       </div>

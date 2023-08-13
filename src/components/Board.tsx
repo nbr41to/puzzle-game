@@ -1,14 +1,40 @@
 import { DropItem } from '@/components/DropItem';
-import { alignCheck, downDrops, switchDrops } from '@/utils/drop';
-import { FC, useCallback, useEffect, useState } from 'react';
+import {
+  alignCheck,
+  generateDrops,
+  switchDrops,
+  downDrops,
+  provideDrops,
+} from '@/utils/drop';
+import { FC, useCallback, useEffect, useReducer, useState } from 'react';
 import initialBoard from '@/mocks/board.json';
 import clsx from 'clsx';
 import { BoardBackground } from '@/components/BoardBackground';
+import { Button } from '@/components/Button';
 
 export const Board: FC = () => {
-  const [boardState, setBoardState] = useState<Board>(initialBoard as Board);
+  const [isStarted, started] = useReducer(() => true, false);
+  const [movable, switchMovable] = useReducer((state) => !state, false);
+
+  const [drops, setDrops] = useState<NullableDrop[]>(
+    initialBoard.flat() as NullableDrop[],
+  );
   const [draggingDrop, setDraggingDrop] = useState<Drop | null>(null);
   const [moved, setMoved] = useState(false);
+
+  /* 初回のドロップの供給 */
+  useEffect(() => {
+    const newDrop = generateDrops();
+    setDrops(newDrop);
+  }, []);
+
+  /* ゲーム開始 */
+  const start = useCallback(() => {
+    const result = downDrops(drops, 5);
+    setDrops(result);
+    started();
+    switchMovable();
+  }, [drops]);
 
   /* touch したときに scroll を無効 */
   useEffect(() => {
@@ -26,15 +52,12 @@ export const Board: FC = () => {
     };
   }, []);
 
-  /* boardにnullがある場合に下に詰める */
-  const downdrops = () => {
-    if (boardState.flat().every((drop) => drop !== null)) return;
-    const newBoard = downDrops(boardState);
-    console.log(newBoard.map((row) => row.map((drop) => drop?.color)));
-    setBoardState(newBoard);
+  /* ドロップを下に詰める */
+  const provide = () => {
+    switchMovable();
+    setDrops(provideDrops(drops));
   };
 
-  /* ドロップを下に詰める */
   // useEffect(() => {
   //   {
   //     (async () => {
@@ -50,37 +73,36 @@ export const Board: FC = () => {
       if (!draggingDrop) return;
       if (!moved) setMoved(true);
 
-      const switchedBoard = switchDrops(boardState, [
+      const newDrops = switchDrops(drops, [
         draggingDrop?.position as Position,
         drop.position,
       ]);
-      setBoardState(switchedBoard);
+      setDrops(newDrops);
       setDraggingDrop({
         ...draggingDrop,
         position: drop.position,
       });
     },
-    [moved, draggingDrop, boardState],
+    [moved, draggingDrop, drops],
   );
 
   /* ドロップを離したとき */
   const handleOnDragEnd = useCallback(() => {
-    console.log('handleOnDragEnd', moved, draggingDrop);
     if (!moved && draggingDrop) return;
-    const newBoard = alignCheck(boardState);
-    setBoardState(newBoard);
+    const newDrops = alignCheck(drops);
+    setDrops(newDrops);
     setDraggingDrop(null);
     setMoved(false);
-  }, [moved, draggingDrop, boardState]);
+  }, [moved, draggingDrop, drops]);
 
   /* SP: ドロップを動かしているとき */
   const handleOnTouchMove = useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
+    async (e: React.TouchEvent<HTMLDivElement>) => {
       /* 重なったelementを取得 */
       const elemBelow = document.elementFromPoint(
         e.changedTouches[0].clientX,
         e.changedTouches[0].clientY,
-      );
+      ) as HTMLElement;
       if (!elemBelow) return;
 
       /* 重なったelementがdrop zoneでなければreturn */
@@ -91,7 +113,6 @@ export const Board: FC = () => {
         .split('-')
         .slice(1)
         .map((str) => Number(str)) as Position;
-      console.log(dropZonePosition);
 
       /* 自分の場所ならreturn */
       if (
@@ -102,41 +123,26 @@ export const Board: FC = () => {
 
       /* 重なったelementのonDragEnterを発火 */
       const eventHandler = () => {
-        console.log('handleOnTouchMove EventListener');
-        handleOnDragEnter(
-          boardState[dropZonePosition[0]][dropZonePosition[1]] as Drop,
+        const targetDrop = drops.find(
+          (drop) =>
+            drop?.position[0] === dropZonePosition[0] &&
+            drop?.position[1] === dropZonePosition[1],
         );
+        if (!targetDrop) return;
+        handleOnDragEnter(targetDrop);
       };
+      elemBelow.style.pointerEvents = 'none';
       elemBelow.addEventListener('dragenter', eventHandler);
       elemBelow.dispatchEvent(new Event('dragenter'));
       elemBelow.removeEventListener('dragenter', eventHandler);
+      await new Promise((resolve) => setTimeout(resolve, 200)); // animationの時間待つ
+      elemBelow.style.pointerEvents = 'auto';
     },
-    [draggingDrop, boardState, handleOnDragEnter],
+    [draggingDrop, drops, handleOnDragEnter],
   );
 
   return (
     <div className='mx-auto w-fit relative'>
-      <button
-        onClick={() => {
-          console.log('refreshBoard');
-          const switchedBoard = switchDrops(boardState, [
-            [2, 3],
-            [2, 4],
-          ]);
-
-          console.log(
-            switchedBoard.map((row) => row.map((drop) => drop?.color)),
-          );
-          setBoardState((prev) =>
-            switchDrops(prev, [
-              [2, 3],
-              [2, 4],
-            ]),
-          );
-        }}
-      >
-        SWITCH TEST
-      </button>
       <div
         id='board'
         className={clsx([
@@ -144,9 +150,8 @@ export const Board: FC = () => {
           'relative select-none',
         ])}
       >
-        {boardState
-          .flat()
-          .map(
+        <div>
+          {drops.map(
             (drop) =>
               drop !== null && (
                 <DropItem
@@ -161,8 +166,22 @@ export const Board: FC = () => {
                 />
               ),
           )}
+        </div>
+        {/* Blur */}
+        {!movable && <div className='absolute w-full h-full bg-black/50' />}
+        {/* Start Button */}
+        {!isStarted && (
+          <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
+            <Button onClick={start}>START</Button>
+          </div>
+        )}
         <BoardBackground />
       </div>
+
+      <div hidden className='w-fit mx-auto mt-4'>
+        <Button onClick={() => setDrops(generateDrops())}>REFRESH</Button>
+      </div>
+      <Button onClick={provide}>provide</Button>
     </div>
   );
 };

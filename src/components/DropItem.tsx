@@ -68,12 +68,10 @@ export const DropItem: FC<Props> = memo(
           }}
           /* SP対応 */
           onTouchStart={(e) => {
-            console.log('touch start');
             setIsTouchMoving(true);
             onDragStart();
           }}
           onTouchEnd={(e) => {
-            console.log('touch end');
             setIsTouchMoving(false);
             onDragEnd();
             /* 位置を戻す */
@@ -83,7 +81,6 @@ export const DropItem: FC<Props> = memo(
             target.style.left = '50%';
           }}
           onTouchMove={(e) => {
-            console.log('touch move');
             /* 位置を動的に */
             const target = e.target as HTMLDivElement;
             const touch = e.touches[0];
@@ -109,7 +106,10 @@ export const DropItem: FC<Props> = memo(
         {!active && moving && (
           <div
             id={`drop-${drop.position[0]}-${drop.position[1]}`}
-            className={clsx(['w-[52px] h-[52px] z-10 absolute'])}
+            className={clsx([
+              'w-[52px] h-[52px] z-10 absolute',
+              'bg-gray-300/50', // only for debug
+            ])}
             onDragEnter={onDragEnter}
             onDragOver={(e) => {
               e.preventDefault();

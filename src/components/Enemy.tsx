@@ -1,29 +1,36 @@
+'use client';
+
 import Image from 'next/image';
-import { FC } from 'react';
+import { FC, useEffect, useId, useState } from 'react';
+import dummy_enemies from '@/mocks/enemies.json';
 
 type Prop = {};
 
 export const Enemy: FC<Prop> = () => {
-  const dice = Math.floor(Math.random() * 2);
+  const [enemyId, setEnemyId] = useState(0);
+  useEffect(() => {
+    const id = Math.floor(Math.random() * 2);
+    setEnemyId(id);
+  }, []);
+
+  const enemy = dummy_enemies[enemyId];
+
   return (
     <div className='flex flex-col items-center'>
-      <p></p>
       <Image
-        src={dice ? '/animal_bull_kowai.png' : '/leader_ibaru.png'}
+        src={enemy.imageSrc}
         /* 点滅 */
-        width={240}
-        height={240}
+        width={200}
+        height={200}
+        priority={true}
         alt='enemy image'
       />
-      <div className='w-full'>
-        <p className='text-xs font-bold'>HP: 80 / 100</p>
-        <div className='outline outline-2 outline-gray-400 rounded-full mt-0.5 overflow-hidden'>
-          <div className='w-4/5 bg-blue-600 h-2'></div>
-        </div>
+      {/* HP BAR */}
+      <div className='w-4/5 outline outline-2 outline-gray-400 rounded-full mt-0.5 overflow-hidden'>
+        <div className='w-4/5 bg-blue-600 h-2'></div>
       </div>
-      <div className='text-sm mt-1'>
-        <p>ATK: 10</p>
-      </div>
+      {/* <p>{dice ? '不服そうなじょ牛' : 'ムーノナ・ジョシー'}</p> */}
+      <p className='text-sm mt-1'>{enemy.name}</p>
     </div>
   );
 };
