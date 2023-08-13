@@ -147,7 +147,7 @@ export const Board: FC = () => {
         id='board'
         className={clsx([
           'w-[312px] h-[260px] outline-gray-400 outline outline-1 rounded overflow-hidden',
-          'relative select-none',
+          'relative ',
         ])}
       >
         <div>
