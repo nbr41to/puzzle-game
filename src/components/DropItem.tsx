@@ -46,7 +46,7 @@ export const DropItem: FC<Props> = memo(
     return (
       <div
         className={clsx([
-          'w-[52px] h-[52px] cursor-move active:opacity-50 absolute z-0',
+          'w-[52px] h-[52px] cursor-move active:opacity-60 absolute z-0',
           'transition-all ease-in-out',
         ])}
         style={{
@@ -112,7 +112,7 @@ export const DropItem: FC<Props> = memo(
             id={`drop-${drop.position[0]}-${drop.position[1]}`}
             className={clsx([
               'w-[52px] h-[52px] z-10 absolute',
-              'bg-gray-300/50', // only for debug
+              // 'bg-gray-300/50', // only for debug
             ])}
             onDragEnter={onDragEnter}
             onDragOver={(e) => {

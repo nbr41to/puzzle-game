@@ -74,7 +74,6 @@ export const Board: FC<Props> = ({
           } else {
             setPhase('be-attacked');
           }
-          await wait(200);
           break;
         case 'removing':
           await wait(800);
@@ -87,12 +86,13 @@ export const Board: FC<Props> = ({
           setPhase('checking');
           break;
         case 'attacking':
-          await wait(800);
+          await wait(1000);
           onAttack(score);
           setPhase('be-attacked');
           break;
         case 'be-attacked':
-          await wait(800);
+          await wait(900);
+          console.log('be-attacked');
           onBeAttacked();
           setPhase('standby');
           break;

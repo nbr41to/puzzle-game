@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 body {
+  @apply text-slate-800;
 }
 
 @layer utilities {

@@ -21,7 +21,7 @@ export const PartyMembers: FC<Prop> = ({ life }) => {
           alt='party member 1 image'
         />
         <Image
-          className='border-2 border-violet-500 bg-violet-200 rounded active:scale-105'
+          className='border-2 border-purple-500 bg-violet-200 rounded active:scale-105'
           src='/computer_hacker_black1.png'
           width={48}
           height={48}
@@ -29,7 +29,7 @@ export const PartyMembers: FC<Prop> = ({ life }) => {
           alt='party member 2 image'
         />
         <Image
-          className='border-2 border-violet-500 bg-violet-200 rounded active:scale-105'
+          className='border-2 border-purple-500 bg-violet-200 rounded active:scale-105'
           src='/computer_hacker_black1.png'
           width={48}
           height={48}
@@ -37,7 +37,7 @@ export const PartyMembers: FC<Prop> = ({ life }) => {
           alt='party member 3 image'
         />
         <Image
-          className='border-2 border-violet-500 bg-violet-200 rounded active:scale-105'
+          className='border-2 border-purple-500 bg-violet-200 rounded active:scale-105'
           src='/computer_hacker_black_syuudan.png'
           width={48}
           height={48}
@@ -45,7 +45,7 @@ export const PartyMembers: FC<Prop> = ({ life }) => {
           alt='party member 4 image'
         />
         <Image
-          className='border-2 border-violet-500 bg-violet-200 rounded active:scale-105'
+          className='border-2 border-purple-500 bg-violet-200 rounded active:scale-105'
           src='/computer_hacker_black_syuudan.png'
           width={48}
           height={48}
@@ -70,7 +70,7 @@ export const PartyMembers: FC<Prop> = ({ life }) => {
             </div>
           </div>
           <div
-            className='bg-rose-500 transition-[width] h-4'
+            className='bg-pink-500 transition-[width] h-4'
             style={{ width: `${lifePercent}%` }}
           />
         </div>
