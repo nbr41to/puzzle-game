@@ -9,8 +9,8 @@ body {
   .attack-effect {
     animation: attack-effect 0.5s ease-in-out;
   }
-  .take-effect {
-    animation: take-effect 0.5s ease-in-out;
+  .hit-effect {
+    animation: hit-effect 0.5s ease-in-out;
   }
 
   @keyframes attack-effect {
@@ -25,7 +25,7 @@ body {
     }
   }
 
-  @keyframes take-effect {
+  @keyframes hit-effect {
     0%,
     50%,
     100% {

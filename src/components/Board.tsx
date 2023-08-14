@@ -1,98 +1,134 @@
 import { DropItem } from '@/components/DropItem';
-import {
-  alignCheck,
-  generateDrops,
-  switchDrops,
-  downDrops,
-  packDownDrops,
-} from '@/utils/drop';
-import { FC, useCallback, useEffect, useReducer, useState } from 'react';
-import initialBoard from '@/mocks/board.json';
+import { switchDrops } from '@/utils/drop';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { BoardBackground } from '@/components/BoardBackground';
 import { Button } from '@/components/Button';
+import {
+  alignCheck,
+  packDownDrops,
+  provideStandbyDrops,
+  refreshAllDrop,
+  removeAlignDrops,
+} from '@/utils/board';
+import { wait } from '@/utils/wait';
+import { useNoScrollAtBoard } from '@/utils/useNoScrollAtBoard';
+
+type Phase =
+  | 'not-started' /* ゲーム開始前 */
+  | 'standby' /* パズル待ち */
+  | 'moving' /* パズル中 */
+  | 'checking' /* 揃っているドロップを確認 */
+  | 'removing' /* 揃っているドロップを削除 */
+  | 'packing' /* 消えたドロップを詰める */
+  | 'providing' /* 新しいドロップを供給 */;
 
 type Props = {
   started: boolean;
   onStart: () => void;
+  onAttack: (amount: number) => void;
+  onBeAttacked: () => void;
 };
-export const Board: FC<Props> = ({ started, onStart }) => {
-  const [movable, switchMovable] = useReducer((state) => !state, false);
-
-  const [drops, setDrops] = useState<NullableDrop[]>(
-    initialBoard.flat() as NullableDrop[],
-  );
+export const Board: FC<Props> = ({
+  started,
+  onStart,
+  onAttack,
+  onBeAttacked,
+}) => {
+  const [phase, setPhase] = useState<Phase>('not-started');
+  const [drops, setDrops] = useState<Drop[]>([]);
   const [draggingDrop, setDraggingDrop] = useState<Drop | null>(null);
-  const [moved, setMoved] = useState(false);
+  const [score, setScore] = useState(0);
+  const isMoving = useMemo(() => phase === 'moving', [phase]);
+  const movable = useMemo(
+    () => phase === 'standby' || phase === 'moving',
+    [phase],
+  );
+  useNoScrollAtBoard();
 
-  /* 初回のドロップの供給 */
+  /* Phaseの変更時のトリガー */
   useEffect(() => {
-    const newDrop = generateDrops();
-    setDrops(newDrop);
-  }, []);
+    (async () => {
+      console.log('phase: ', phase);
+      switch (phase) {
+        case 'not-started':
+          setDrops(provideStandbyDrops());
+          setPhase('standby');
+          break;
+        case 'standby':
+          break;
+        case 'moving':
+          break;
+        case 'checking':
+          await wait();
+          const { newDrops, amount } = alignCheck(drops);
+          if (amount > 0) {
+            setScore((prev) => prev + amount);
+            setDrops(newDrops);
+            onAttack(amount);
+            setPhase('removing');
+          } else {
+            console.log('amount: ', amount);
+            onBeAttacked();
+            setPhase('standby');
+          }
+          await wait(200);
+          break;
+        case 'removing':
+          await wait(800);
+          setDrops(removeAlignDrops(drops));
+          setPhase('packing');
+          break;
+        case 'packing':
+          await wait(300);
+          setDrops(packDownDrops(drops));
+          setPhase('checking');
+          break;
+        default:
+          break;
+      }
+    })();
+  }, [phase, drops, onAttack, onBeAttacked]);
 
-  /* ゲーム開始 */
-  const start = useCallback(() => {
-    const result = downDrops(drops, 5);
-    setDrops(result);
+  /**
+   * ゲームの開始
+   */
+  const handleOnStart = useCallback(() => {
     onStart();
-    switchMovable();
-  }, [drops]);
+    setDrops(refreshAllDrop(drops));
+  }, [onStart, drops]);
 
-  /* touch したときに scroll を無効 */
-  useEffect(() => {
-    const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault();
-    };
-    const board = document.getElementById('board');
-    if (!board) return;
-    board.addEventListener('touchmove', handleTouchMove, {
-      passive: false,
-    });
-
-    return () => {
-      board.removeEventListener('touchmove', handleTouchMove);
-    };
-  }, []);
-
-  /* ドロップを下に詰める */
-  const packDown = useCallback(() => {
-    switchMovable();
-    setDrops(packDownDrops(drops));
-  }, [drops]);
-
-  /* ドラッグしたドロップが他のドロップエリアに進入したとき */
+  /**
+   * ドラッグしたドロップが他のドロップエリアに進入したとき
+   */
   const handleOnDragEnter = useCallback(
-    (drop: Drop) => {
+    (targetDrop: Drop) => {
       if (!draggingDrop) return;
-      if (!moved) setMoved(true);
-
-      const newDrops = switchDrops(drops, [
-        draggingDrop?.position as Position,
-        drop.position,
-      ]);
-      setDrops(newDrops);
+      if (!isMoving) setPhase('moving');
+      console.log(draggingDrop.position, '->', targetDrop.position);
+      setDrops(
+        switchDrops(drops, [draggingDrop.position, targetDrop.position]),
+      );
       setDraggingDrop({
         ...draggingDrop,
-        position: drop.position,
+        position: targetDrop.position,
       });
     },
-    [moved, draggingDrop, drops],
+    [draggingDrop, drops, isMoving],
   );
 
-  /* ドロップを離したとき */
-  const handleOnDragEnd = useCallback(async () => {
-    if (!moved && draggingDrop) return;
-    switchMovable();
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const newDrops = alignCheck(drops);
-    setDrops(newDrops);
+  /**
+   * ドロップを離したとき
+   */
+  const handleOnDragEnd = useCallback(() => {
+    if (!isMoving && draggingDrop) return;
     setDraggingDrop(null);
-    setMoved(false);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  }, [moved, draggingDrop, drops]);
+    setPhase('checking');
+  }, [isMoving, draggingDrop]);
 
-  /* SP: ドロップを動かしているとき */
+  /**
+   * SP: ドロップを動かしているとき
+   */
   const handleOnTouchMove = useCallback(
     async (e: React.TouchEvent<HTMLDivElement>) => {
       /* 重なったelementを取得 */
@@ -143,8 +179,8 @@ export const Board: FC<Props> = ({ started, onStart }) => {
       <div
         id='board'
         className={clsx([
-          'w-[312px] h-[260px] outline-gray-400 outline outline-1 rounded overflow-hidden',
-          'relative ',
+          'w-[312px] h-[260px] outline-gray-400 outline outline-1 rounded relative',
+          'overflow-hidden', // OFFで待機ボードを可視化
         ])}
       >
         <div>
@@ -165,21 +201,16 @@ export const Board: FC<Props> = ({ started, onStart }) => {
           )}
         </div>
         {/* Blur */}
-        {!movable && <div className='absolute w-full h-full bg-black/50' />}
+        {!movable && <div className='absolute w-full h-full bg-black/20' />}
         {/* Start Button */}
         {!started && (
           <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
-            <Button onClick={start}>START</Button>
+            <Button onClick={handleOnStart}>START</Button>
           </div>
         )}
         <BoardBackground />
       </div>
-
-      <div hidden className='w-fit mx-auto mt-4'>
-        <Button onClick={() => setDrops(generateDrops())}>REFRESH</Button>
-      </div>
-      <Button onClick={packDown}>PACK DOWN</Button>
-      <Button onClick={packDown}>PROVIDE</Button>
+      <div className='text-sm font-bold'>消した数: {score}</div>
     </div>
   );
 };

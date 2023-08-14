@@ -1,5 +1,6 @@
-import { FC, memo, useState } from 'react';
+import { FC, memo, useMemo, useState } from 'react';
 import clsx from 'clsx';
+import { onBoard } from '@/utils/board';
 
 const getColorClass = (color: Color) => {
   switch (color) {
@@ -38,8 +39,9 @@ export const DropItem: FC<Props> = memo(
     onDragEnter,
     onTouchMove,
   }) => {
-    const { color, position } = drop;
+    const { color, position, align } = drop;
     const [isTouchMoving, setIsTouchMoving] = useState(false);
+    const isOnBoard = onBoard(position);
 
     return (
       <div
@@ -58,6 +60,7 @@ export const DropItem: FC<Props> = memo(
             getColorClass(color),
             'rounded-full w-[48px] h-[48px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
             'shadow-[-4px_-2px_8px_4px_rgba(0,0,0,0.3)_inset]',
+            align && 'opacity-20 animate-pulse',
             active && isTouchMoving && 'pointer-events-none',
           ])}
           draggable
@@ -103,12 +106,12 @@ export const DropItem: FC<Props> = memo(
         </div>
 
         {/* Drop Zone */}
-        {!active && moving && (
+        {!active && moving && isOnBoard && (
           <div
             id={`drop-${drop.position[0]}-${drop.position[1]}`}
             className={clsx([
               'w-[52px] h-[52px] z-10 absolute',
-              'bg-gray-300/50', // only for debug
+              // 'bg-gray-300/50', // only for debug
             ])}
             onDragEnter={onDragEnter}
             onDragOver={(e) => {

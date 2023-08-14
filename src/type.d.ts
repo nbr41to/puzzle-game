@@ -4,6 +4,7 @@ type Drop = {
   id: string;
   color: Color;
   position: Position;
+  align: boolean;
 };
 type NullableDrop = Drop | null;
 type Board = [
@@ -48,3 +49,11 @@ type Board = [
     NullableDrop, // [4, 5]
   ],
 ];
+
+type Enemy = {
+  id: number;
+  name: string;
+  imageSrc: string;
+  life: number;
+  attack: number;
+};

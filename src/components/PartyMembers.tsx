@@ -1,9 +1,13 @@
 import Image from 'next/image';
 import { FC } from 'react';
 
-type Prop = {};
+type Prop = {
+  life: number;
+};
 
-export const PartyMembers: FC<Prop> = () => {
+export const PartyMembers: FC<Prop> = ({ life }) => {
+  const lifePercent = (life / 100) * 100;
+
   return (
     <div className=''>
       <div className='flex justify-between'>
@@ -58,9 +62,9 @@ export const PartyMembers: FC<Prop> = () => {
       </div>
       <div className='w-full mt-2'>
         <div className='outline outline-2 outline-blue-500 rounded-full mt-0.5 bg-gray-600 overflow-hidden'>
-          <div className='w-8 bg-rose-500'>
+          <div className='bg-rose-500' style={{ width: `${lifePercent}%` }}>
             <p className='text-xs font-bold pl-2 text-white whitespace-nowrap'>
-              HP: 12 / 100
+              HP: {life} / 100
             </p>
           </div>
         </div>
