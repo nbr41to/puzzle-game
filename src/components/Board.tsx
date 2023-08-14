@@ -18,7 +18,7 @@ import { DamageCounter } from '@/components/DamageCounter';
 type Phase =
   | 'not-started' /* ゲーム開始前 */
   | 'standby' /* パズル待ち */
-  | 'moving' /* パズル中 */
+  | 'resolving' /* パズル中 */
   | 'checking' /* 揃っているドロップを確認 */
   | 'removing' /* 揃っているドロップを削除 */
   | 'packing' /* 消えたドロップを詰める */
@@ -41,12 +41,13 @@ export const Board: FC<Props> = ({
   const [drops, setDrops] = useState<Drop[]>([]);
   const [draggingDrop, setDraggingDrop] = useState<Drop | null>(null);
   const [score, setScore] = useState(0);
-  const isMoving = useMemo(() => phase === 'moving', [phase]);
+  const isResolving = useMemo(() => phase === 'resolving', [phase]);
   const movable = useMemo(
-    () => phase === 'standby' || phase === 'moving',
+    () => phase === 'standby' || phase === 'resolving',
     [phase],
   );
   useNoScrollAtBoard();
+  console.log(phase);
 
   /* Phaseの変更時のトリガー */
   useEffect(() => {
@@ -58,7 +59,7 @@ export const Board: FC<Props> = ({
           break;
         case 'standby':
           break;
-        case 'moving':
+        case 'resolving':
           setScore(0);
           break;
         case 'checking':
@@ -114,8 +115,11 @@ export const Board: FC<Props> = ({
    */
   const handleOnDragEnter = useCallback(
     async (targetDrop: Drop) => {
+      console.log('drag enter');
+      console.log(draggingDrop);
+      console.log(targetDrop);
       if (!draggingDrop) return;
-      if (!isMoving) setPhase('moving');
+      if (!isResolving) setPhase('resolving');
       setDrops(
         switchDrops(drops, [draggingDrop.position, targetDrop.position]),
       );
@@ -125,17 +129,21 @@ export const Board: FC<Props> = ({
       });
       // await new Promise((resolve) => setTimeout(resolve, 100)); // animationの時間待つ
     },
-    [draggingDrop, drops, isMoving],
+    [draggingDrop, drops, isResolving],
   );
 
   /**
    * ドロップを離したとき
    */
   const handleOnDragEnd = useCallback(() => {
-    if (!isMoving && draggingDrop) return;
-    setDraggingDrop(null);
-    setPhase('checking');
-  }, [isMoving, draggingDrop]);
+    if (!draggingDrop) return;
+    if (isResolving) {
+      setDraggingDrop(null);
+      setPhase('checking');
+    } else {
+      setDraggingDrop(null);
+    }
+  }, [isResolving, draggingDrop]);
 
   /**
    * SP: ドロップを動かしているとき
@@ -202,7 +210,7 @@ export const Board: FC<Props> = ({
                   key={drop.id}
                   drop={drop}
                   active={draggingDrop?.id === drop.id}
-                  moving={draggingDrop !== null}
+                  isDragStarted={draggingDrop !== null}
                   onDragStart={() => setDraggingDrop(drop)}
                   onDragEnd={handleOnDragEnd}
                   onDragEnter={() => handleOnDragEnter(drop)}
@@ -223,7 +231,7 @@ export const Board: FC<Props> = ({
       </div>
       {started && (
         <div className='mt-1'>
-          <DamageCounter score={score} magnification={512} />
+          <DamageCounter score={score} magnification={4096} />
         </div>
       )}
     </div>

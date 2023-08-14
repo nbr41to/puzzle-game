@@ -1,4 +1,4 @@
-import { FC, memo, useMemo, useState } from 'react';
+import { FC, memo, useState } from 'react';
 import clsx from 'clsx';
 import { onBoard } from '@/utils/board';
 
@@ -9,11 +9,11 @@ const getColorClass = (color: Color) => {
     case 'green':
       return 'bg-green-500';
     case 'blue':
-      return 'bg-blue-500';
+      return 'bg-sky-500';
     case 'light':
       return 'bg-yellow-500';
     case 'dark':
-      return 'bg-violet-500';
+      return 'bg-purple-500';
     default:
       return '';
   }
@@ -22,7 +22,7 @@ const getColorClass = (color: Color) => {
 type Props = {
   drop: Drop;
   active: boolean;
-  moving: boolean;
+  isDragStarted: boolean;
   onDragStart: () => void;
   onDragEnd: () => void;
   onDragEnter: () => void;
@@ -33,7 +33,7 @@ export const DropItem: FC<Props> = memo(
   ({
     drop,
     active,
-    moving,
+    isDragStarted,
     onDragStart,
     onDragEnd,
     onDragEnter,
@@ -52,7 +52,7 @@ export const DropItem: FC<Props> = memo(
         style={{
           top: `${position[0] * 52}px`,
           left: `${position[1] * 52}px`,
-          transitionDuration: `${moving ? 100 : 500}ms`,
+          transitionDuration: `${isDragStarted ? 100 : 500}ms`,
         }}
       >
         {/* Draggable Drop */}
@@ -107,12 +107,12 @@ export const DropItem: FC<Props> = memo(
         </div>
 
         {/* Drop Zone */}
-        {!active && moving && isOnBoard && (
+        {!active && isDragStarted && isOnBoard && (
           <div
             id={`drop-${drop.position[0]}-${drop.position[1]}`}
             className={clsx([
               'w-[52px] h-[52px] z-10 absolute',
-              // 'bg-gray-300/50', // only for debug
+              'bg-gray-300/50', // only for debug
             ])}
             onDragEnter={onDragEnter}
             onDragOver={(e) => {

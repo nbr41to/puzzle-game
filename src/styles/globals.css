@@ -18,6 +18,18 @@ body {
       opacity: 1;
     }
   }
+  .fade-out {
+    animation: fadeOut ease 1s forwards;
+  }
+  @keyframes fadeOut {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
 
   .fade-out-left {
     animation: fade-out-left 0.8s ease-in-out forwards;
@@ -81,7 +93,7 @@ body {
 
   /* ダメージ上昇エフェクト */
   .damage-counting {
-    transform-origin: bottom;
+    transform-origin: bottom center;
     animation: damage-counting 0.8s ease-in-out infinite;
   }
 

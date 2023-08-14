@@ -29,23 +29,26 @@ export const DamageCounter: FC<Props> = ({ score, magnification }) => {
   const counted = score !== 0 && count === damage;
 
   return (
-    <div className='text-sm font-bold mt-1'>
-      消した数: {score}
+    <div className='text-sm font-bold mt-1 flex items-center gap-1'>
+      <span>消した数: {score}</span>
       {score !== 0 && (
-        <span>
-          {' '}
-          × <span className='text-red-500'>{magnification}</span> =
+        <>
+          <span>×</span>
+          <span className='bg-gradient-to-br from-yellow-500  to-teal-500 text-transparent bg-clip-text'>
+            {magnification}
+          </span>
+          <span>=</span>
           <span
             className={clsx([
-              'text-sm font-extrabold inline-block w-16 px-2',
-              'bg-gradient-to-br from-yellow-400 via-pink-500 to-teal-500 text-transparent bg-clip-text',
+              'text-lg font-extrabold w-16 px-3 flex-grow text-center',
+              'bg-gradient-to-br from-yellow-400 via-pink-500 to-teal-400 text-transparent bg-clip-text',
               !counted && 'damage-counting',
             ])}
           >
             {count}
           </span>
-          ダメージ！
-        </span>
+          <span>ダメージ！</span>
+        </>
       )}
     </div>
   );

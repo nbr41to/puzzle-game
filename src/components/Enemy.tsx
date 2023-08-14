@@ -21,6 +21,7 @@ export const Enemy: FC<Prop> = ({ enemy, life, effect }) => {
           className={clsx([
             effect === 'attack' && 'attack-effect',
             effect === 'hit' && 'hit-effect',
+            life === 0 && 'fade-out',
           ])}
           /* 点滅 */
           width={200}
