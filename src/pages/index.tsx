@@ -5,7 +5,8 @@ import { useEffect, useReducer, useState } from 'react';
 import dummy_enemy from '@/mocks/enemies.json';
 import { GameOver } from '@/components/GameOver';
 import { Congratulations } from '@/components/Congratulations';
-import { BaseTitleLogo, TitleLogo } from '@/components/TitleLogo';
+import { TitleLogo } from '@/components/TitleLogo';
+import { TitleLogoEffect } from '@/components/TitleLogoEffect';
 
 /* 相手ガチャ */
 const getEnemy = () => {
@@ -54,7 +55,7 @@ export default function Home() {
     <div className='mx-auto w-fit py-4 select-none'>
       {myLife === 0 && <GameOver />}
       {enemyLife === 0 && <Congratulations />}
-      <TitleLogo started={isStarted} />
+      <TitleLogoEffect started={isStarted} />
       <div className='space-y-4'>
         {isStarted ? (
           <>
@@ -62,7 +63,7 @@ export default function Home() {
             <PartyMembers life={myLife} />
           </>
         ) : (
-          <BaseTitleLogo />
+          <TitleLogo />
         )}
         <Board
           started={isStarted}
