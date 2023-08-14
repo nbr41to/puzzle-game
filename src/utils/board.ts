@@ -1,4 +1,3 @@
-import { SEE_BOARD_BY_COLOR, SEE_STANDBY_BOARD_BY_COLOR } from '@/utils/debug';
 import { generateDrop } from '@/utils/drop';
 
 export const onBoard = (position: Position): boolean => {
@@ -104,8 +103,6 @@ const getMatchDropIndexes = (line: readonly Drop[]): number[] => {
     result.push(index);
   });
 
-  // console.log(colors, result);
-
   return result;
 };
 
@@ -120,8 +117,6 @@ export const alignCheck = (
 } => {
   const checkTargetDrops = drops.filter((drop) => drop.position[0] > -1);
   const alignPositions = new Set<Position>();
-  // SEE_BOARD_BY_COLOR(drops);
-  // SEE_BOARD_BY_COLOR(checkTargetDrops);
 
   /* 列のチェック */
   for (let row = 0; row < 5; row++) {

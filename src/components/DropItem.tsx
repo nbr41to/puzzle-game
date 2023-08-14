@@ -47,11 +47,12 @@ export const DropItem: FC<Props> = memo(
       <div
         className={clsx([
           'w-[52px] h-[52px] cursor-move active:opacity-50 absolute z-0',
-          'transition-all duration-200 ease-in-out',
+          'transition-all ease-in-out',
         ])}
         style={{
           top: `${position[0] * 52}px`,
           left: `${position[1] * 52}px`,
+          transitionDuration: `${moving ? 100 : 500}ms`,
         }}
       >
         {/* Draggable Drop */}

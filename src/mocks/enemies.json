@@ -1,16 +1,30 @@
 [
   {
-    "id": 0,
+    "id": 10,
+    "name": "神",
+    "imageSrc": "/shinwa_zeus.png",
+    "life": 100,
+    "attack": 99979887
+  },
+  {
+    "id": 5,
+    "name": "魔王",
+    "imageSrc": "/fantasy_maou_devil.png",
+    "life": 100,
+    "attack": 38295242
+  },
+  {
+    "id": 3,
     "name": "不服そうなじょ牛",
     "imageSrc": "/animal_bull_kowai.png",
     "life": 100,
-    "attack": 26
+    "attack": 26436527
   },
   {
-    "id": 1,
+    "id": 2,
     "name": "ムーノナ・ジョシー",
     "imageSrc": "/leader_ibaru.png",
     "life": 100,
-    "attack": 21
+    "attack": 21158297
   }
 ]

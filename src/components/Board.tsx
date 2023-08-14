@@ -13,6 +13,7 @@ import {
 } from '@/utils/board';
 import { wait } from '@/utils/wait';
 import { useNoScrollAtBoard } from '@/utils/useNoScrollAtBoard';
+import { DamageCounter } from '@/components/DamageCounter';
 
 type Phase =
   | 'not-started' /* ゲーム開始前 */
@@ -21,7 +22,8 @@ type Phase =
   | 'checking' /* 揃っているドロップを確認 */
   | 'removing' /* 揃っているドロップを削除 */
   | 'packing' /* 消えたドロップを詰める */
-  | 'providing' /* 新しいドロップを供給 */;
+  | 'attacking' /* 自分の攻撃 */
+  | 'be-attacked' /* 相手の攻撃 */;
 
 type Props = {
   started: boolean;
@@ -49,7 +51,6 @@ export const Board: FC<Props> = ({
   /* Phaseの変更時のトリガー */
   useEffect(() => {
     (async () => {
-      console.log('phase: ', phase);
       switch (phase) {
         case 'not-started':
           setDrops(provideStandbyDrops());
@@ -58,6 +59,7 @@ export const Board: FC<Props> = ({
         case 'standby':
           break;
         case 'moving':
+          setScore(0);
           break;
         case 'checking':
           await wait();
@@ -65,12 +67,11 @@ export const Board: FC<Props> = ({
           if (amount > 0) {
             setScore((prev) => prev + amount);
             setDrops(newDrops);
-            onAttack(amount);
             setPhase('removing');
+          } else if (score > 0) {
+            setPhase('attacking');
           } else {
-            console.log('amount: ', amount);
-            onBeAttacked();
-            setPhase('standby');
+            setPhase('be-attacked');
           }
           await wait(200);
           break;
@@ -84,11 +85,21 @@ export const Board: FC<Props> = ({
           setDrops(packDownDrops(drops));
           setPhase('checking');
           break;
+        case 'attacking':
+          await wait(800);
+          onAttack(score);
+          setPhase('be-attacked');
+          break;
+        case 'be-attacked':
+          await wait(800);
+          onBeAttacked();
+          setPhase('standby');
+          break;
         default:
           break;
       }
     })();
-  }, [phase, drops, onAttack, onBeAttacked]);
+  }, [phase, drops, onAttack, onBeAttacked, score]);
 
   /**
    * ゲームの開始
@@ -102,10 +113,9 @@ export const Board: FC<Props> = ({
    * ドラッグしたドロップが他のドロップエリアに進入したとき
    */
   const handleOnDragEnter = useCallback(
-    (targetDrop: Drop) => {
+    async (targetDrop: Drop) => {
       if (!draggingDrop) return;
       if (!isMoving) setPhase('moving');
-      console.log(draggingDrop.position, '->', targetDrop.position);
       setDrops(
         switchDrops(drops, [draggingDrop.position, targetDrop.position]),
       );
@@ -113,6 +123,7 @@ export const Board: FC<Props> = ({
         ...draggingDrop,
         position: targetDrop.position,
       });
+      // await new Promise((resolve) => setTimeout(resolve, 100)); // animationの時間待つ
     },
     [draggingDrop, drops, isMoving],
   );
@@ -168,7 +179,7 @@ export const Board: FC<Props> = ({
       elemBelow.addEventListener('dragenter', eventHandler);
       elemBelow.dispatchEvent(new Event('dragenter'));
       elemBelow.removeEventListener('dragenter', eventHandler);
-      await new Promise((resolve) => setTimeout(resolve, 200)); // animationの時間待つ
+      await new Promise((resolve) => setTimeout(resolve, 100)); // animationの時間待つ
       elemBelow.style.pointerEvents = 'auto';
     },
     [draggingDrop, drops, handleOnDragEnter],
@@ -210,7 +221,11 @@ export const Board: FC<Props> = ({
         )}
         <BoardBackground />
       </div>
-      <div className='text-sm font-bold'>消した数: {score}</div>
+      {started && (
+        <div className='mt-1'>
+          <DamageCounter score={score} magnification={512} />
+        </div>
+      )}
     </div>
   );
 };

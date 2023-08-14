@@ -6,10 +6,11 @@ type Prop = {
 };
 
 export const PartyMembers: FC<Prop> = ({ life }) => {
-  const lifePercent = (life / 100) * 100;
+  const maxLife = 100_000_000;
+  const lifePercent = (life / maxLife) * 100;
 
   return (
-    <div className=''>
+    <div className='fade-in'>
       <div className='flex justify-between'>
         <Image
           className='border-2 border-red-500 bg-red-200 rounded active:scale-105'
@@ -61,12 +62,17 @@ export const PartyMembers: FC<Prop> = ({ life }) => {
         />
       </div>
       <div className='w-full mt-2'>
-        <div className='outline outline-2 outline-blue-500 rounded-full mt-0.5 bg-gray-600 overflow-hidden'>
-          <div className='bg-rose-500' style={{ width: `${lifePercent}%` }}>
-            <p className='text-xs font-bold pl-2 text-white whitespace-nowrap'>
-              HP: {life} / 100
-            </p>
+        <div className='outline outline-2 outline-blue-500 rounded-full mt-0.5 bg-gray-600 overflow-hidden relative'>
+          <div className='absolute w-full text-xs font-bold px-2 text-white whitespace-nowrap flex justify-between'>
+            <div>HP</div>
+            <div>
+              {life.toLocaleString()} / {maxLife.toLocaleString()}
+            </div>
           </div>
+          <div
+            className='bg-rose-500 transition-[width] h-4'
+            style={{ width: `${lifePercent}%` }}
+          />
         </div>
       </div>
     </div>

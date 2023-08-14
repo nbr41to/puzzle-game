@@ -6,13 +6,51 @@ body {
 }
 
 @layer utilities {
+  .fade-in {
+    animation: fadeIn ease 1s;
+  }
+  @keyframes fadeIn {
+    0%,
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .fade-out-left {
+    animation: fade-out-left 0.8s ease-in-out forwards;
+  }
+  @keyframes fade-out-left {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+  }
+
+  .fade-out-right {
+    animation: fade-out-right 0.8s ease-in-out forwards;
+  }
+  @keyframes fade-out-right {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+
+  /* 攻撃をする相手 */
   .attack-effect {
     animation: attack-effect 0.5s ease-in-out;
   }
-  .hit-effect {
-    animation: hit-effect 0.5s ease-in-out;
-  }
-
   @keyframes attack-effect {
     0% {
       transform: scale(1);
@@ -25,6 +63,10 @@ body {
     }
   }
 
+  /* 攻撃を受けた相手 */
+  .hit-effect {
+    animation: hit-effect 0.5s ease-in-out;
+  }
   @keyframes hit-effect {
     0%,
     50%,
@@ -34,6 +76,24 @@ body {
     25%,
     75% {
       opacity: 1;
+    }
+  }
+
+  /* ダメージ上昇エフェクト */
+  .damage-counting {
+    transform-origin: bottom;
+    animation: damage-counting 0.8s ease-in-out infinite;
+  }
+
+  @keyframes damage-counting {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px) scale(1.4);
+    }
+    100% {
+      transform: translateY(0);
     }
   }
 }

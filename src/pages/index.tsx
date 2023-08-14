@@ -1,20 +1,37 @@
 import { Board } from '@/components/Board';
 import { Enemy } from '@/components/Enemy';
 import { PartyMembers } from '@/components/PartyMembers';
-import Image from 'next/image';
 import { useEffect, useReducer, useState } from 'react';
 import dummy_enemy from '@/mocks/enemies.json';
+import { GameOver } from '@/components/GameOver';
+import { Congratulations } from '@/components/Congratulations';
+import { BaseTitleLogo, TitleLogo } from '@/components/TitleLogo';
+
+/* 相手ガチャ */
+const getEnemy = () => {
+  const ids = [10, 5, 3, 2];
+  const dice = Math.floor(Math.random() * 10);
+
+  for (let i = 0; i < ids.length; i++) {
+    if (dice % ids[i] === 0) {
+      return dummy_enemy[i];
+    }
+  }
+
+  return dummy_enemy[3];
+};
+
 export default function Home() {
   const [isStarted, start] = useReducer(() => true, false);
-  const [myLife, setMyLife] = useState(100);
+  const [myLife, setMyLife] = useState(100_000_000);
   const [enemy, setEnemy] = useState<Enemy>(dummy_enemy[0]);
   const [enemyLife, setEnemyLife] = useState(0);
   const [enemyEffect, setEnemyEffect] = useState<string | null>(null);
 
   useEffect(() => {
-    const id = Math.floor(Math.random() * 2);
-    setEnemy(dummy_enemy[id]);
-    setEnemyLife(dummy_enemy[id].life);
+    const enm = getEnemy();
+    setEnemy(enm);
+    setEnemyLife(enm.life);
   }, []);
 
   const handleSetEffect = (effect: string) => {
@@ -28,33 +45,25 @@ export default function Home() {
   };
 
   const handleOnBeAttacked = () => {
+    if (enemyLife === 0) return;
     handleSetEffect('attack');
-    setMyLife((prev) => (prev - 25 < 0 ? 0 : prev - 25));
+    setMyLife((prev) => (prev - enemy.attack < 0 ? 0 : prev - enemy.attack));
   };
 
   return (
     <div className='mx-auto w-fit py-4 select-none'>
+      {myLife === 0 && <GameOver />}
+      {enemyLife === 0 && <Congratulations />}
+      <TitleLogo started={isStarted} />
       <div className='space-y-4'>
         {isStarted ? (
-          <Enemy enemy={enemy} life={enemyLife} effect={enemyEffect} />
+          <>
+            <Enemy enemy={enemy} life={enemyLife} effect={enemyEffect} />
+            <PartyMembers life={myLife} />
+          </>
         ) : (
-          <div className='h-[234px] grid place-content-center relative'>
-            <h1 hidden> Puzzle and </h1>
-            <div className='text-center text-teal-500 font-bold drop-shadow'>
-              <div className='text-5xl pr-24'>Puzzle</div>
-              <div className='text-3xl pl-8'>and</div>
-              <div className='text-4xl pl-2'>Programmings</div>
-            </div>
-            <Image
-              className='absolute top-8 right-3'
-              src='/character_program_fast.png'
-              width={100}
-              height={100}
-              alt='character'
-            />
-          </div>
+          <BaseTitleLogo />
         )}
-        <PartyMembers life={myLife} />
         <Board
           started={isStarted}
           onStart={start}
