@@ -7,6 +7,7 @@ import { GameOver } from '@/components/GameOver';
 import { Congratulations } from '@/components/Congratulations';
 import { TitleLogo } from '@/components/TitleLogo';
 import { TitleLogoEffect } from '@/components/TitleLogoEffect';
+import Head from 'next/head';
 
 /* 相手ガチャ */
 const getEnemy = () => {
@@ -52,26 +53,32 @@ export default function Home() {
   };
 
   return (
-    <div className='mx-auto w-fit py-4 select-none'>
-      {myLife === 0 && <GameOver />}
-      {enemyLife === 0 && <Congratulations />}
-      <TitleLogoEffect started={isStarted} />
-      <div className='space-y-4'>
-        {isStarted ? (
-          <>
-            <Enemy enemy={enemy} life={enemyLife} effect={enemyEffect} />
-            <PartyMembers life={myLife} />
-          </>
-        ) : (
-          <TitleLogo />
-        )}
-        <Board
-          started={isStarted}
-          onStart={start}
-          onAttack={handleOnAttack}
-          onBeAttacked={handleOnBeAttacked}
-        />
+    <>
+      <Head>
+        <title>Puzzle and Programming</title>
+        <meta name='description' content='パズ◯ラ' />
+      </Head>
+      <div className='mx-auto w-fit py-4 select-none'>
+        {myLife === 0 && <GameOver />}
+        {enemyLife === 0 && <Congratulations />}
+        <TitleLogoEffect started={isStarted} />
+        <div className='space-y-4'>
+          {isStarted ? (
+            <>
+              <Enemy enemy={enemy} life={enemyLife} effect={enemyEffect} />
+              <PartyMembers life={myLife} />
+            </>
+          ) : (
+            <TitleLogo />
+          )}
+          <Board
+            started={isStarted}
+            onStart={start}
+            onAttack={handleOnAttack}
+            onBeAttacked={handleOnBeAttacked}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
