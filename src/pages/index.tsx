@@ -56,8 +56,8 @@ export default function Home() {
     <>
       <Head>
         <title>Puzzle and Programming</title>
-        <meta name='title' content='Puzzle and Programming' />
-        <meta name='description' content='Reactでパズ◯ラ作ってみた' />
+        <meta property='og:title' content='Puzzle and Programming' />
+        <meta property='og:description' content='Reactでパズ◯ラ作ってみた' />
       </Head>
       <div className='mx-auto w-fit py-4 select-none'>
         {myLife === 0 && <GameOver />}
