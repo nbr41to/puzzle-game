@@ -60,7 +60,7 @@ body {
     }
   }
 
-  /* 攻撃をする相手 */
+  /*  攻撃をする相手  */
   .attack-effect {
     animation: attack-effect 0.5s ease-in-out;
   }
@@ -76,7 +76,7 @@ body {
     }
   }
 
-  /* 攻撃を受けた相手 */
+  /*  攻撃を受けた相手  */
   .hit-effect {
     animation: hit-effect 0.5s ease-in-out;
   }
@@ -92,7 +92,7 @@ body {
     }
   }
 
-  /* ダメージ上昇エフェクト */
+  /*  ダメージ上昇エフェクト  */
   .damage-counting {
     transform-origin: bottom center;
     animation: damage-counting 0.8s ease-in-out infinite;
@@ -109,4 +109,206 @@ body {
       transform: translateY(0);
     }
   }
+}
+
+/* *  
+ * 紙吹雪のスタイル 
+ */
+.confetti {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.confetti span {
+  position: absolute;
+  top: -100%; /* アニメーション以外の紙吹雪を非表示 */
+  left: 0;
+}
+
+/* アニメーションの記述 */
+.confetti span:nth-child(2n + 1) {
+  animation: confetti1 5s 0s linear infinite;
+}
+
+.confetti span:nth-child(2n + 2) {
+  animation: confetti2 5s 0s linear infinite;
+}
+
+/* 紙吹雪を回転させる記述 */
+@keyframes confetti1 {
+  0% {
+    top: -10%;
+    transform: translateX(0) rotateX(0) rotateY(0);
+  }
+
+  100% {
+    top: 100%;
+    transform: translateX(20px) rotateX(180deg) rotateY(360deg);
+  }
+}
+
+@keyframes confetti2 {
+  0% {
+    top: -10%;
+    transform: translateX(0) rotateX(0) rotateY(0);
+  }
+
+  100% {
+    top: 100%;
+    transform: translateX(-20vw) rotateX(180deg) rotateY(360deg);
+  }
+}
+
+/* 紙吹雪の配置 */
+.confetti span:nth-child(1) {
+  left: 0%;
+}
+
+.confetti span:nth-child(2) {
+  left: 10%;
+}
+
+.confetti span:nth-child(3) {
+  left: 20%;
+}
+
+.confetti span:nth-child(4) {
+  left: 30%;
+}
+
+.confetti span:nth-child(5) {
+  left: 40%;
+}
+
+.confetti span:nth-child(6) {
+  left: 50%;
+}
+
+.confetti span:nth-child(7) {
+  left: 60%;
+}
+
+.confetti span:nth-child(8) {
+  left: 70%;
+}
+
+.confetti span:nth-child(9) {
+  left: 80%;
+}
+
+.confetti span:nth-child(10) {
+  left: 90%;
+}
+
+.confetti span:nth-child(11) {
+  left: 100%;
+}
+
+/* 紙吹雪の大きさ */
+.confetti span:nth-child(3n + 1) {
+  width: 3vw;
+  height: 3vw;
+}
+
+.confetti span:nth-child(3n + 2) {
+  width: 2vw;
+  height: 2vw;
+}
+
+.confetti span:nth-child(3n + 3) {
+  width: 1.5vw;
+  height: 1.5w;
+}
+
+/* 紙吹雪の色 */
+.confetti span:nth-child(2n + 1) {
+  background: red;
+}
+
+.confetti span:nth-child(2n + 2) {
+  background: orange;
+}
+
+.confetti span:nth-child(2n + 3) {
+  background: purple;
+}
+
+.confetti span:nth-child(2n + 4) {
+  background: pink;
+}
+
+.confetti span:nth-child(2n + 5) {
+  background: blue;
+}
+
+.confetti span:nth-child(2n + 6) {
+  background: green;
+}
+
+.confetti span:nth-child(2n + 7) {
+  background: yellow;
+}
+
+/* アニメーションの秒数 */
+.confetti span:nth-child(2n + 1) {
+  animation-duration: 5s;
+}
+
+.confetti span:nth-child(2n + 2) {
+  animation-duration: 6s;
+}
+
+.confetti span:nth-child(2n + 3) {
+  animation-duration: 10s;
+}
+
+.confetti span:nth-child(2n + 4) {
+  animation-duration: 4s;
+}
+
+/* 紙吹雪が降り始めるまでの時間 */
+.confetti span:nth-child(2n + 1) {
+  animation-delay: 0s;
+}
+
+.confetti span:nth-child(2n + 2) {
+  animation-delay: 4s;
+}
+
+.confetti span:nth-child(2n + 3) {
+  animation-delay: 6s;
+}
+
+.confetti span:nth-child(2n + 4) {
+  animation-delay: 2s;
+}
+
+.confetti span:nth-child(2n + 5) {
+  animation-delay: 6s;
+}
+
+.confetti span:nth-child(2n + 6) {
+  animation-delay: 10s;
+}
+
+.confetti span:nth-child(2n + 7) {
+  animation-delay: 2s;
+}
+
+.confetti span:nth-child(2n + 8) {
+  animation-delay: 4s;
+}
+
+.confetti span:nth-child(2n + 9) {
+  animation-delay: 11s;
+}
+
+.confetti span:nth-child(2n + 10) {
+  animation-delay: 1s;
+}
+
+.confetti span:nth-child(2n + 11) {
+  animation-delay: 5s;
 }

@@ -56,8 +56,10 @@ export default function Home() {
     <>
       <Head>
         <title>Puzzle and Programming</title>
+        <meta name='title' content='Puzzle and Programming' />
         <meta name='description' content='Reactでパズ◯ラ作ってみた' />
       </Head>
+      <Congratulations />
       <div className='mx-auto w-fit py-4 select-none'>
         {myLife === 0 && <GameOver />}
         {enemyLife === 0 && <Congratulations />}
