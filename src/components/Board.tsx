@@ -47,7 +47,6 @@ export const Board: FC<Props> = ({
     [phase],
   );
   useNoScrollAtBoard();
-  console.log(phase);
 
   /* Phaseの変更時のトリガー */
   useEffect(() => {
@@ -92,7 +91,6 @@ export const Board: FC<Props> = ({
           break;
         case 'be-attacked':
           await wait(900);
-          console.log('be-attacked');
           onBeAttacked();
           setPhase('standby');
           break;
@@ -115,9 +113,6 @@ export const Board: FC<Props> = ({
    */
   const handleOnDragEnter = useCallback(
     async (targetDrop: Drop) => {
-      console.log('drag enter');
-      console.log(draggingDrop);
-      console.log(targetDrop);
       if (!draggingDrop) return;
       if (!isResolving) setPhase('resolving');
       setDrops(
